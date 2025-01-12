@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh;">
+
+    <form action="https://j0n9finkzh.execute-api.ap-southeast-2.amazonaws.com/Prod/send" method="POST" style="background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 100%; max-width: 500px;">
+        <h2 style="margin-top: 0; text-align: center; color: #333;">Feedback Form</h2>
+        
+        <!-- Name Field -->
+        <label for="name" style="display: block; margin-bottom: 8px; font-weight: bold;">Your Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your name" required style="width: 100%; padding: 10px; margin-bottom: 16px; border: 1px solid #ccc; border-radius: 4px;">
+
+        <!-- Email Field -->
+        <label for="email" style="display: block; margin-bottom: 8px; font-weight: bold;">Your Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required style="width: 100%; padding: 10px; margin-bottom: 16px; border: 1px solid #ccc; border-radius: 4px;">
+
+        <!-- Satisfaction Level (Radio Buttons) -->
+        <label style="display: block; margin-bottom: 8px; font-weight: bold;">How satisfied are you with our service?</label>
+        <div style="margin-bottom: 16px;">
+            <label><input type="radio" name="satisfaction" value="very_satisfied" required> Very Satisfied</label><br>
+            <label><input type="radio" name="satisfaction" value="satisfied"> Satisfied</label><br>
+            <label><input type="radio" name="satisfaction" value="neutral"> Neutral</label><br>
+            <label><input type="radio" name="satisfaction" value="dissatisfied"> Dissatisfied</label><br>
+            <label><input type="radio" name="satisfaction" value="very_dissatisfied"> Very Dissatisfied</label>
+        </div>
+
+        <!-- Features Used (Checkboxes) -->
+        <label style="display: block; margin-bottom: 8px; font-weight: bold;">Which features did you use?</label>
+        <div style="margin-bottom: 16px;">
+            <label><input type="checkbox" name="features" value="feature_1"> Feature 1</label><br>
+            <label><input type="checkbox" name="features" value="feature_2"> Feature 2</label><br>
+            <label><input type="checkbox" name="features" value="feature_3"> Feature 3</label><br>
+            <label><input type="checkbox" name="features" value="feature_4"> Feature 4</label><br>
+            <label><input type="checkbox" name="features" value="feature_5"> Feature 5</label>
+        </div>
+
+        <!-- Improvement Suggestions (Textarea) -->
+        <label for="improvements" style="display: block; margin-bottom: 8px; font-weight: bold;">What can we improve?</label>
+        <textarea id="improvements" name="improvements" placeholder="Share your suggestions..." rows="4" style="width: 100%; padding: 10px; margin-bottom: 16px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+
+        <!-- Hidden Fields -->
+        <input type="hidden" name="form_type" value="feedback_form">
+        <input type="hidden" name="subject" value="Customer Feedback">
+
+        <!-- Submit Button -->
+        <button type="submit" style="width: 100%; padding: 12px; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer;">Submit Feedback</button>
+    </form>
+
+</body>
+</html>

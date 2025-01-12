@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  web-mailer
+
+  An AWS SAM Template for a serverless web mailer application that processes form submissions and sends notifications using Amazon SES.
+
+Parameters:
+  Destination:
+    Type: String
+    Description: An email address to receive notifications.
+    Default: user@example.com
+
+  SendAs:
+    Type: String
+    Description: The "from" address to use.
+    Default: Web Mailer <noreply@web-mailer.example.com>
+    
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+
+Resources:
+  SendMailFunction:
+    Type: AWS::Serverless::Function 
+    Properties:
+      CodeUri: send_mail/
+      Handler: app.lambda_handler
+      Policies:
+        - Statement:
+            - Sid: SES
+              Effect: Allow
+              Action:
+                - ses:*
+              Resource: '*'
+      Runtime: python3.12
+      Architectures:
+        - arm64
+      Environment:
+        Variables:
+          SES_TEMPLATE: "ContactFormTemplate"
+          SES_RECIP_EMAIL: !Ref Destination
+          SES_SOURCE_EMAIL: !Ref SendAs
+      Events:
+        Send:
+          Type: Api 
+          Properties:
+            Path: /send
+            Method: post
+
