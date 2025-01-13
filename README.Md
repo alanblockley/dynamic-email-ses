@@ -5,6 +5,13 @@ This project implements an AWS Lambda function to dynamically process form submi
 
 ---
 
+## :warning: :warning: :warning: WARNING
+Review this code before you deploy it into your environment. 
+
+You are responsible for implementing your own security and spam prevention methods. 
+
+---
+
 ## Features
 - **Dynamic Email Content**: Processes form submissions with varying fields to generate custom emails.
 - **SES Integration**: Uses SES templates for structured email delivery.
