@@ -1,3 +1,4 @@
+# AWS SAM Template for a Serverless Web Mailer Application
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
@@ -5,28 +6,50 @@ Description: >
 
   An AWS SAM Template for a serverless web mailer application that processes form submissions and sends notifications using Amazon SES.
 
+# Parameters allow customization of the deployment
 Parameters:
+  # Email address that will receive form submissions
   Destination:
     Type: String
     Description: An email address to receive notifications.
     Default: user@example.com
 
+  # The sender email address for notifications
   SendAs:
     Type: String
     Description: The "from" address to use.
     Default: Web Mailer <noreply@web-mailer.example.com>
-    
+
+  # Domain where the form is hosted (for CORS)
+  HostedFormDomain:
+    Type: String
+    Description: The domain name where the form is hosted.
+    Default: https://example.com
+
+  # Toggle API Key authentication
+  EnableApiKey:
+    Type: String
+    AllowedValues: ['true', 'false']
+    Default: 'true'
+    Description: Enable API Key authentication for the API
+
+# Condition to control API Key resource creation
+Conditions: 
+  CreateApiKey: !Equals [!Ref EnableApiKey, 'true']
+
+# Global configuration for all Lambda functions
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 30
     MemorySize: 128
-
 Resources:
+  # Main Lambda function that processes form submissions
   SendMailFunction:
     Type: AWS::Serverless::Function 
     Properties:
       CodeUri: send_mail/
       Handler: app.lambda_handler
+      # IAM permissions for SES operations
       Policies:
         - Statement:
             - Sid: SES
@@ -37,15 +60,74 @@ Resources:
       Runtime: python3.12
       Architectures:
         - arm64
+      # Environment configuration for the Lambda function
       Environment:
         Variables:
           SES_TEMPLATE: "ContactFormTemplate"
           SES_RECIP_EMAIL: !Ref Destination
           SES_SOURCE_EMAIL: !Ref SendAs
+      # API Gateway integration
       Events:
         Send:
           Type: Api 
           Properties:
+            RestApiId: !Ref WebMailerApi
             Path: /send
             Method: post
 
+  # API Gateway configuration
+  WebMailerApi:
+    Type: AWS::Serverless::Api
+    Properties:
+          StageName: Prod
+      # API throttling settings
+      MethodSettings:
+        - ResourcePath: "/*"
+          HttpMethod: "*"
+          ThrottlingRateLimit: 1
+          ThrottlingBurstLimit: 3
+
+  # API Key for authentication
+  ApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Condition: CreateApiKey
+    Properties:
+      Enabled: true
+      Name: WebMailerApiKey
+      StageKeys:
+        - RestApiId: !Ref WebMailerApi
+          StageName: Prod
+
+  # Usage plan to control API access
+  ApiUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Condition: CreateApiKey
+    Properties:
+      ApiStages:
+        - ApiId: !Ref WebMailerApi
+          Stage: Prod
+      Description: Usage plan for Web Mailer API
+      # Monthly quota settings
+      Quota:
+        Limit: 5000
+        Period: MONTH
+      # Request throttling settings
+      Throttle:
+        RateLimit: 10
+        BurstLimit: 20
+
+  # Associates API Key with usage plan
+  ApiUsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Condition: CreateApiKey
+    Properties:
+      KeyId: !Ref ApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref ApiUsagePlan
+
+# Template outputs
+Outputs:
+  ApiKeyId:
+    Condition: CreateApiKey
+    Description: API Key ID
+    Value: !Ref ApiKey

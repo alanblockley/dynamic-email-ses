@@ -1,4 +1,3 @@
-
 # Created by https://www.gitignore.io/api/osx,linux,python,windows,pycharm,visualstudiocode
 
 ### Linux ###
@@ -238,7 +237,11 @@ $RECYCLE.BIN/
 *.lnk
 
 # Build folder
-
 */build/*
+
+### AWS SAM ###
+.aws-sam/
+samconfig.toml
+.samcli/
 
 # End of https://www.gitignore.io/api/osx,linux,python,windows,pycharm,visualstudiocode
