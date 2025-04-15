@@ -79,7 +79,7 @@ Resources:
   WebMailerApi:
     Type: AWS::Serverless::Api
     Properties:
-          StageName: Prod
+      StageName: Prod
       # API throttling settings
       MethodSettings:
         - ResourcePath: "/*"
